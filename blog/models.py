@@ -16,9 +16,18 @@ class Tag(models.Model):
 class Posts(models.Model):
     title=models.CharField(max_length=50)
     excerpt=models.CharField(max_length=100)
-    image_name=models.CharField( max_length=20)
+    image=models.ImageField(upload_to="posts",null=True)
+    # image_name=models.CharField( max_length=20)
     date=models.DateField(auto_now=True)
     slug=models.SlugField(default="",unique=True,null=False,db_index=True)
     content=models.TextField(validators=[MinLengthValidator(10)])
     author=models.ForeignKey(Author, on_delete=models.SET_NULL,null=True,related_name="posts")
     tag=models.ManyToManyField(Tag)
+    def __str__(self) -> str:
+        return  f"{self.title}"
+
+class Comment(models.Model):
+    user_name=models.CharField(max_length=120)
+    user_email=models.EmailField()
+    text=models.TextField(max_length=400)
+    post=models.ForeignKey(Posts,on_delete=models.CASCADE,related_name="comments")
